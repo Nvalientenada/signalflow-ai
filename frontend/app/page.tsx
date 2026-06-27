@@ -1,3 +1,5 @@
+import EventDashboard from "@/components/EventDashboard";
+
 type RawEvent = {
   id: number;
   source: string;
@@ -54,30 +56,6 @@ async function getEvents(): Promise<RawEvent[]> {
   }
 }
 
-function getSeverityStyles(severity: RawEvent["severity"]){
-  if (severity === "high"){
-    return "border-red-400/40 bg-red-500/10 text-red-300";
-  }
-
-  if (severity === "medium"){
-    return "border-yellow-400/40 bg-yellow-500/10 text-yellow-200";
-  }
-  return "border-green-400/40 bg-green-500/10 text-green-300";
-}
-
-function getCategoryLabel(category: RawEvent["category"]) {
-  const labels = {
-    weather: "Weather",
-    transportation: "Transportation",
-    building: "Building",
-    power: "Power",
-    network: "Network",
-    user_report: "User Report",
-  };
-
-  return labels[category];
-}
-
 export default async function Home() {
   const backendHealth = await getBackendHealth();
   const events = await getEvents();
@@ -132,66 +110,7 @@ export default async function Home() {
           </div>
         </div>
 
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold">Live Raw Signals</h2>
-            <p className="mt-1 text-sm text-slate-400">
-              These are the unprocessed alerts, reports, and operational signals
-              coming into the system.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          {events.map((event) => (
-            <article
-              key={event.id}
-              className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/20"
-            >
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <span className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-200">
-                  {getCategoryLabel(event.category)}
-                </span>
-
-                <span
-                  className={`rounded-full border px-3 py-1 text-xs font-medium ${getSeverityStyles(
-                    event.severity
-                  )}`}
-                >
-                  {event.severity.toUpperCase()}
-                </span>
-              </div>
-
-              <h3 className="mb-2 text-xl font-semibold">{event.title}</h3>
-
-              <p className="mb-5 text-sm leading-6 text-slate-300">
-                {event.message}
-              </p>
-
-              <div className="grid gap-3 text-sm text-slate-400 sm:grid-cols-2">
-                <div>
-                  <p className="text-slate-500">Location</p>
-                  <p className="text-slate-200">{event.location_name}</p>
-                </div>
-
-                <div>
-                  <p className="text-slate-500">Source</p>
-                  <p className="text-slate-200">{event.source}</p>
-                </div>
-
-                <div>
-                  <p className="text-slate-500">Status</p>
-                  <p className="text-slate-200">{event.status}</p>
-                </div>
-
-                <div>
-                  <p className="text-slate-500">Timestamp</p>
-                  <p className="text-slate-200">{event.timestamp}</p>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+        <EventDashboard events = {events} />
       </section>
     </main>
   );
