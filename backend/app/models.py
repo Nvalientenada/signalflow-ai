@@ -1,5 +1,5 @@
 from typing import Literal 
-from pydantic import BaseModel 
+from pydantic import BaseModel, Field 
 
 EventCategory = Literal[
     "weather",
@@ -28,4 +28,9 @@ class RawEvent(BaseModel):
     timestamp: str 
     severity: SeverityLevel
     status: str 
-    
+
+# Shape of an incoming form data 
+class UserReportCreate(BaseModel):
+    message: str = Field(min_length= 5, max_length=500) # lengths are in characters
+    location_name: str = Field(min_length=2, max_length=100)
+    severity:SeverityLevel

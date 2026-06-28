@@ -1,6 +1,7 @@
 "use client";
 
 import {useState} from "react";
+import UserReportForm from "./UserReportForm";
 
 type RawEvent = {
   id: number;
@@ -63,13 +64,15 @@ function getFilterButtonStyles(isActive: boolean) {
 }
 
 export default function EventDashboard({ events }: EventDashboardProps) {
+  const [dashboardEvents, setDashboardEvents] = useState<RawEvent[]>(events);
+
   const [selectedCategory, setSelectedCategory] =
     useState<CategoryFilter>("all");
 
   const [selectedSeverity, setSelectedSeverity] =
     useState<SeverityFilter>("all");
 
-  const filteredEvents = events.filter((event) => {
+  const filteredEvents = dashboardEvents.filter((event) => {
     const categoryMatches =
       selectedCategory === "all" || event.category === selectedCategory;
 
@@ -80,8 +83,15 @@ export default function EventDashboard({ events }: EventDashboardProps) {
   });
 
   return (
-    <>
-      <div className="mb-6 flex flex-col gap-4">
+  <>
+    <UserReportForm
+      onReportCreated={(newEvent) => {
+        setDashboardEvents((currentEvents) => [newEvent, ...currentEvents]);
+        setSelectedCategory("all");
+        setSelectedSeverity("all");
+      }}
+    />
+    <div className="mb-6 flex flex-col gap-4">
         <div>
           <h2 className="text-2xl font-bold">Live Raw Signals</h2>
           <p className="mt-1 text-sm text-slate-400">
@@ -211,7 +221,7 @@ export default function EventDashboard({ events }: EventDashboardProps) {
             {filteredEvents.length}
           </span>{" "}
           of{" "}
-          <span className="font-semibold text-slate-200">{events.length}</span>{" "}
+          <span className="font-semibold text-slate-200">{dashboardEvents.length}</span>{" "}
           events.
         </p>
       </div>
