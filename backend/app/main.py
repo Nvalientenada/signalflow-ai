@@ -1,15 +1,17 @@
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.models import RawEvent, UserReportCreate
+from app.models import RawEvent, UserReportCreate, Incident
 from app.mock_data import MOCK_EVENTS
+from app.services.incident_service import generate_incidents
+
 
 from datetime import datetime, timezone
 
 app = FastAPI(
     title = "SignalFlow AI API",
     description = " Backend API for the SignalFlow AI incident intelligence platform",
-    version = "0.3.0",
+    version = "0.4.0",
 )
 
 origins = [
@@ -37,7 +39,7 @@ def health_check():
     return {
         "status": "ok",
         "service": "signalflow-ai-api",
-        "version": "0.3.0",
+        "version": "0.4.0",
     }
 
 @app.get("/events", response_model=list[RawEvent])
@@ -65,3 +67,7 @@ def create_user_report(report: UserReportCreate):
     MOCK_EVENTS.append(new_event) #temporary storage before PostgreSQL database
 
     return new_event
+
+@app.get("/incidents", response_model=list[Incident])
+def get_incidents():
+    return generate_incidents(MOCK_EVENTS)

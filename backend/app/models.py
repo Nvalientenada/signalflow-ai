@@ -16,6 +16,12 @@ SeverityLevel = Literal[
     "high",
 ]
 
+IncidentStatus = Literal[
+    "active",
+    "monitoring",
+    "resolved",
+]
+
 class RawEvent(BaseModel):
     id:int
     source: str
@@ -34,3 +40,13 @@ class UserReportCreate(BaseModel):
     message: str = Field(min_length= 5, max_length=500) # lengths are in characters
     location_name: str = Field(min_length=2, max_length=100)
     severity:SeverityLevel
+
+class Incident(BaseModel):
+    id: int 
+    title: str
+    summary: str
+    severity: SeverityLevel
+    status: IncidentStatus
+    affected_area: str
+    recommended_action: str
+    evidence_event_ids: list[int] # list of raw events supporting incident
