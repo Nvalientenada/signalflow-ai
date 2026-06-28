@@ -88,13 +88,34 @@ export default function EventDashboard({
   incidents,
 }: EventDashboardProps) {
   const [dashboardEvents, setDashboardEvents] = useState<RawEvent[]>(events);
-  const [dashboardIncidents] = useState<Incident[]>(incidents);
+  // set function lets change the state of the current incidents 
+  // to update incidents card whemn user reports sth 
+  const [dashboardIncidents, setDashboardIncidents] = useState<Incident[]>(incidents);
 
   const [selectedCategory, setSelectedCategory] =
     useState<CategoryFilter>("all");
 
   const [selectedSeverity, setSelectedSeverity] =
     useState<SeverityFilter>("all");
+  
+  
+  async function refreshIncidents() {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/incidents", { // get last generated incidents 
+        cache: "no-store",
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const updatedIncidents: Incident[] = await response.json(); // turning backend JSON into frontend Javascript usable data
+
+      setDashboardIncidents(updatedIncidents); //update incident card
+    } catch {
+      return;
+    }
+  }
 
   const filteredEvents = dashboardEvents.filter((event) => {
     const categoryMatches =
@@ -110,9 +131,10 @@ export default function EventDashboard({
     <>
       <UserReportForm
         onReportCreated={(newEvent) => {
-          setDashboardEvents((currentEvents) => [newEvent, ...currentEvents]);
+          setDashboardEvents((currentEvents) => [newEvent, ...currentEvents]); // update raw events rigth away
           setSelectedCategory("all");
           setSelectedSeverity("all");
+          refreshIncidents(); // ask backend to generate incidents usign updated event list
         }}
       />
 
