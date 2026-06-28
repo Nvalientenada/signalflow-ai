@@ -20,6 +20,17 @@ type RawEvent = {
   status: string;
 };
 
+type Incident = {
+  id: number;
+  title: string;
+  summary: string;
+  severity: "low" | "medium" | "high";
+  status: "active" | "monitoring" | "resolved" ;
+  affected_area: string;
+  recommended_action: string;
+  evidence_event_ids: number[];
+};
+
 async function getBackendHealth() {
   try{
     const response = await fetch("http://127.0.0.1:8000/health", {
@@ -56,9 +67,26 @@ async function getEvents(): Promise<RawEvent[]> {
   }
 }
 
+async function getIncidents(): Promise<Incident[]> {
+  try {
+    const response = await fetch("http://127.0.0.1:8000/incidents", {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    return response.json();
+  } catch {
+    return [];
+  }
+}
+
 export default async function Home() {
   const backendHealth = await getBackendHealth();
   const events = await getEvents();
+  const incidents = await getIncidents();
 
   const isConnected = backendHealth.status === "ok";
 
@@ -77,12 +105,12 @@ export default async function Home() {
 
             <p className="max-w-3xl text-lg text-slate-300">
               A full-stack AI system that collects raw signals, detects
-              disruptions, and will later generate evidence-based incident
-              summaries and recommended actions.
+              disruptions, and generates evidence-based incident summaries and
+              recommended actions.
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-4">
             <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
               <p className="text-sm text-slate-400">Backend Status</p>
               <p
@@ -102,6 +130,11 @@ export default async function Home() {
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
+              <p className="text-sm text-slate-400">Incidents</p>
+              <p className="mt-2 text-2xl font-bold">{incidents.length}</p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
               <p className="text-sm text-slate-400">Service</p>
               <p className="mt-2 font-semibold text-slate-200">
                 {backendHealth.service}
@@ -110,7 +143,7 @@ export default async function Home() {
           </div>
         </div>
 
-        <EventDashboard events = {events} />
+        <EventDashboard events={events} incidents={incidents} />
       </section>
     </main>
   );
