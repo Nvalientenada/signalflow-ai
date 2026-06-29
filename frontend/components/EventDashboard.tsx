@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import UserReportForm from "./UserReportForm";
 import IncidentCard, { Incident } from "./dashboard/IncidentCard";
 import EventCard, { RawEvent } from "./dashboard/EventCard";
@@ -11,8 +11,10 @@ type CategoryFilter = RawEvent["category"] | "all";
 type SeverityFilter = RawEvent["severity"] | "all";
 
 type EventDashboardProps = {
-  events: RawEvent[];
-  incidents: Incident[];
+  dashboardEvents: RawEvent[];
+  dashboardIncidents: Incident[];
+  setDashboardEvents: Dispatch<SetStateAction<RawEvent[]>>;
+  setDashboardIncidents: Dispatch<SetStateAction<Incident[]>>;
 };
 
 function getFilterButtonStyles(isActive: boolean) {
@@ -24,12 +26,11 @@ function getFilterButtonStyles(isActive: boolean) {
 }
 
 export default function EventDashboard({
-  events,
-  incidents,
+  dashboardEvents,
+  dashboardIncidents,
+  setDashboardEvents,
+  setDashboardIncidents,
 }: EventDashboardProps) {
-  const [dashboardEvents, setDashboardEvents] = useState<RawEvent[]>(events);
-  const [dashboardIncidents, setDashboardIncidents] =
-    useState<Incident[]>(incidents);
 
   const [selectedCategory, setSelectedCategory] =
     useState<CategoryFilter>("all");
