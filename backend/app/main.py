@@ -5,7 +5,7 @@ from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import create_database_tables
-from app.models import Incident, RawEvent, UserReportCreate
+from app.models import Incident, RawEvent, UserReportCreate, IncidentAnalysis
 from app.repositories.event_repositories import (
     get_all_events,
     get_next_event_id,
@@ -17,6 +17,10 @@ from app.services.report_classifier import (
     build_report_title,
     classify_report_category,
     suggest_report_severity,
+)
+from app.services.ai_analysis_service import (
+    analyze_incident,
+    get_evidence_events_for_incident,
 )
 
 
@@ -98,3 +102,24 @@ def get_incidents():
     events = get_all_events()
 
     return generate_incidents(events)
+
+@app.get("/incidents/analysis", response_model=list[IncidentAnalysis])
+def get_incident_analyses():
+    events = get_all_events()
+    incidents = generate_incidents(events)
+
+    analyses = []
+
+    for incident in incidents:
+        evidence_events = get_evidence_events_for_incident(
+            incident = incident,
+            events=events,
+        )
+
+        analysis = analyze_incident(
+            incident=incident,
+            evidence_events=evidence_events,
+        )
+        analyses.append(analysis)
+        
+    return analyses

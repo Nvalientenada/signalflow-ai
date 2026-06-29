@@ -50,3 +50,16 @@ class Incident(BaseModel):
     affected_area: str
     recommended_action: str
     evidence_event_ids: list[int] # list of raw events supporting incident
+
+# what to send to the AI analysis service
+class IncidentAnalysisRequest(BaseModel):
+    incident: Incident
+    evidence_events:list[RawEvent]
+
+# describes what the AI service returns 
+class IncidentAnalysis(BaseModel):
+    incident_id: int
+    generated_summary: str
+    recommended_action: str
+    confidence_score: float
+    reasoning_notes: list[str]
