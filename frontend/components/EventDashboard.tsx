@@ -1,4 +1,5 @@
 "use client";
+import {IncidentAnalysis} from "./dashboard/AIAnalysisPanel";
 
 import { Dispatch, SetStateAction, useState } from "react";
 import UserReportForm from "./UserReportForm";
@@ -13,8 +14,10 @@ type SeverityFilter = RawEvent["severity"] | "all";
 type EventDashboardProps = {
   dashboardEvents: RawEvent[];
   dashboardIncidents: Incident[];
+  dashboardAnalyses: IncidentAnalysis[];
   setDashboardEvents: Dispatch<SetStateAction<RawEvent[]>>;
   setDashboardIncidents: Dispatch<SetStateAction<Incident[]>>;
+  setDashboardAnalyses: Dispatch<SetStateAction<IncidentAnalysis[]>>;
 };
 
 function getFilterButtonStyles(isActive: boolean) {
@@ -28,8 +31,10 @@ function getFilterButtonStyles(isActive: boolean) {
 export default function EventDashboard({
   dashboardEvents,
   dashboardIncidents,
+  dashboardAnalyses,
   setDashboardEvents,
   setDashboardIncidents,
+  setDashboardAnalyses,
 }: EventDashboardProps) {
 
   const [selectedCategory, setSelectedCategory] =
@@ -51,10 +56,29 @@ export default function EventDashboard({
       const updatedIncidents: Incident[] = await response.json();
 
       setDashboardIncidents(updatedIncidents);
+      refreshAnalyses();
     } catch {
       return;
     }
   }
+
+  async function refreshAnalyses() {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/incidents/analysis", {
+        cache: "no-store",
+        });
+
+        if (!response.ok) {
+        return;
+        }
+
+        const updatedAnalyses: IncidentAnalysis[] = await response.json();
+
+        setDashboardAnalyses(updatedAnalyses); // updates the frontend state
+    } catch {
+        return;
+    }
+    }
 
   const filteredEvents = dashboardEvents.filter((event) => {
     const categoryMatches =
@@ -118,13 +142,19 @@ export default function EventDashboard({
           </div>
         ) : (
           <div className="grid gap-5">
-            {dashboardIncidents.map((incident) => (
-              <IncidentCard
-                key={incident.id}
-                incident={incident}
-                events={dashboardEvents}
-              />
-            ))}
+            {dashboardIncidents.map((incident) => {
+                const matchingAnalysis = dashboardAnalyses.find(
+                    (analysis)=> analysis.incident_id === incident.id
+                );
+                return (
+                    <IncidentCard
+                    key = {incident.id}
+                    incident={incident}
+                    events = {dashboardEvents}
+                    analysis = {matchingAnalysis}
+                    />
+                );
+            })}
           </div>
         )}
       </section>

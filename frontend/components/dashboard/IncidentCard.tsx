@@ -1,4 +1,5 @@
 "use client";
+import AIAnalysisPanel, {IncidentAnalysis} from "./AIAnalysisPanel";
 
 import { useState } from "react";
 import {
@@ -21,6 +22,7 @@ export type Incident = {
 type IncidentCardProps = {
   incident: Incident;
   events: RawEvent[];
+  analysis?: IncidentAnalysis;
 };
 
 function getEvidenceEvents(incident: Incident, events: RawEvent[]) {
@@ -41,7 +43,7 @@ function getSeverityGlow(severity: Incident["severity"]) {
   return "bg-green-500/20";
 }
 
-export default function IncidentCard({ incident, events }: IncidentCardProps) {
+export default function IncidentCard({ incident, events, analysis }: IncidentCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const evidenceEvents = getEvidenceEvents(incident, events);
@@ -138,6 +140,7 @@ export default function IncidentCard({ incident, events }: IncidentCardProps) {
 
         {isExpanded && (
           <div className="mt-6 space-y-5 border-t border-white/10 pt-6">
+            <AIAnalysisPanel analysis= {analysis} />
             <div className="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-5">
               <p className="mb-2 text-sm font-semibold text-cyan-200">
                 Recommended Action

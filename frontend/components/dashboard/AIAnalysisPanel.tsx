@@ -1,0 +1,108 @@
+export type IncidentAnalysis = {
+  incident_id: number;
+  generated_summary: string;
+  recommended_action: string;
+  confidence_score: number;
+  reasoning_notes: string[];
+};
+
+type AIAnalysisPanelProps = {
+  analysis?: IncidentAnalysis;
+};
+
+function formatConfidence(confidenceScore: number) {
+  return `${Math.round(confidenceScore * 100)}%`;
+}
+
+function getConfidenceStyles(confidenceScore: number) {
+  if (confidenceScore >= 0.85) {
+    return "border-green-400/30 bg-green-500/10 text-green-200";
+  }
+
+  if (confidenceScore >= 0.65) {
+    return "border-yellow-400/30 bg-yellow-500/10 text-yellow-100";
+  }
+
+  return "border-red-400/30 bg-red-500/10 text-red-200";
+}
+
+export default function AIAnalysisPanel({ analysis }: AIAnalysisPanelProps) {
+  if (!analysis) { // if analysis exists
+    return (
+      <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
+        <p className="mb-2 text-sm font-semibold text-slate-200">
+          AI Analysis
+        </p>
+
+        <p className="text-sm leading-6 text-slate-400">
+          Analysis is not available for this incident yet.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-5">
+      <div className="absolute right-4 top-4 h-20 w-20 rounded-full bg-cyan-300/10 blur-2xl" />
+
+      <div className="relative">
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
+              AI Analysis
+            </p>
+
+            <h4 className="mt-2 text-lg font-bold text-white">
+              Evidence-Based Summary
+            </h4>
+          </div>
+
+          <span
+            className={`rounded-full border px-3 py-1 text-xs font-semibold ${getConfidenceStyles(
+              analysis.confidence_score
+            )}`}
+          >
+            Confidence {formatConfidence(analysis.confidence_score)}
+          </span>
+        </div>
+
+        <div className="grid gap-4 xl:grid-cols-2">
+          <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+              Generated Summary
+            </p>
+
+            <p className="text-sm leading-6 text-slate-300">
+              {analysis.generated_summary}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+              Recommended Action
+            </p>
+
+            <p className="text-sm leading-6 text-slate-300">
+              {analysis.recommended_action}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-4 rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+            Reasoning Notes
+          </p>
+
+          <ul className="space-y-2">
+            {analysis.reasoning_notes.map((note) => (
+              <li key={note} className="flex gap-3 text-sm leading-6 text-slate-300">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-300" />
+                <span>{note}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}

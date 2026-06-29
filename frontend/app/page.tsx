@@ -2,6 +2,7 @@ import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardClient from "@/components/dashboard/DashboardClient";
 import { Incident } from "@/components/dashboard/IncidentCard";
 import { RawEvent } from "@/components/dashboard/EventCard";
+import { IncidentAnalysis } from "@/components/dashboard/AIAnalysisPanel";
 
 async function getBackendHealth() {
   try {
@@ -59,10 +60,27 @@ async function getIncidents(): Promise<Incident[]> {
   }
 }
 
+async function getIncidentAnalyses(): Promise<IncidentAnalysis[]> {
+  try {
+    const response = await fetch("http://127.0.0.1:8000/incidents/analysis", {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    return response.json();
+  } catch {
+    return [];
+  }
+}
+
 export default async function Home() {
   const backendHealth = await getBackendHealth();
   const events = await getEvents();
   const incidents = await getIncidents();
+  const analyses = await getIncidentAnalyses();
 
   return (
     <main className="min-h-screen overflow-hidden bg-slate-950 text-white">
@@ -90,6 +108,7 @@ export default async function Home() {
             <DashboardClient
               initialEvents={events}
               initialIncidents={incidents}
+              initialAnalyses = {analyses}
               backendHealth={backendHealth}
             />
           </div>

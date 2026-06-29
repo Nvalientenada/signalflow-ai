@@ -1,4 +1,5 @@
 "use client";
+import { IncidentAnalysis } from "./AIAnalysisPanel";
 
 import { useState } from "react";
 import DashboardMetricCard from "./DashboardMetricCard";
@@ -16,12 +17,14 @@ type BackendHealth = {
 type DashboardClientProps = {
   initialEvents: RawEvent[];
   initialIncidents: Incident[];
+  initialAnalyses: IncidentAnalysis[];
   backendHealth: BackendHealth;
 };
 
 export default function DashboardClient({
   initialEvents,
   initialIncidents,
+  initialAnalyses,
   backendHealth,
 }: DashboardClientProps) {
   const [dashboardEvents, setDashboardEvents] =
@@ -29,6 +32,9 @@ export default function DashboardClient({
 
   const [dashboardIncidents, setDashboardIncidents] =
     useState<Incident[]>(initialIncidents);
+
+  const [dashboardAnalyses, setDashboardAnalyses] =
+    useState<IncidentAnalysis[]>(initialAnalyses);
 
   const isConnected = backendHealth.status === "ok";
 
@@ -108,8 +114,10 @@ export default function DashboardClient({
       <EventDashboard
         dashboardEvents={dashboardEvents}
         dashboardIncidents={dashboardIncidents}
+        dashboardAnalyses = {dashboardAnalyses}
         setDashboardEvents={setDashboardEvents}
         setDashboardIncidents={setDashboardIncidents}
+        setDashboardAnalyses = {setDashboardAnalyses}
       />
     </>
   );
