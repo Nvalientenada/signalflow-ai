@@ -13,6 +13,11 @@ from app.repositories.event_repositories import (
 )
 from app.seed import seed_initial_events_if_needed
 from app.services.incident_service import generate_incidents
+from app.services.report_classifier import (
+    build_report_title,
+    classify_report_category,
+    suggest_report_severity,
+)
 
 
 @asynccontextmanager
@@ -65,17 +70,23 @@ def get_events():
 
 @app.post("/reports", response_model=RawEvent, status_code=status.HTTP_201_CREATED)
 def create_user_report(report: UserReportCreate):
+    predicted_category = classify_report_category(report)
+    predicted_severity = suggest_report_severity(report)
+    title = build_report_title(
+        report=report,
+        category=predicted_category,
+    )
     new_event = RawEvent(
         id=get_next_event_id(),
         source="user_submitted",
-        category="user_report",
-        title=f"User Report: {report.location_name}",
+        category=predicted_category,
+        title=title,
         message=report.message,
         location_name=report.location_name,
         latitude=42.8175,
         longitude=-73.9300,
         timestamp=datetime.now(timezone.utc).isoformat(),
-        severity=report.severity,
+        severity=predicted_severity,
         status="active",
     )
 
