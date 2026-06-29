@@ -47,16 +47,43 @@ export function getCategoryLabel(category: RawEvent["category"]) {
   return labels[category];
 }
 
+function getCategoryDot(category: RawEvent["category"]) {
+  const styles = {
+    weather: "bg-blue-300",
+    transportation: "bg-cyan-300",
+    building: "bg-purple-300",
+    power: "bg-yellow-300",
+    network: "bg-green-300",
+    user_report: "bg-pink-300",
+  };
+
+  return styles[category];
+}
+
 export default function EventCard({ event }: EventCardProps) {
   return (
     <article className="group rounded-3xl border border-white/10 bg-white/[0.04] p-5 shadow-lg shadow-black/20 transition hover:-translate-y-1 hover:border-cyan-400/30 hover:bg-white/[0.07]">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <span className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-200">
-          {getCategoryLabel(event.category)}
-        </span>
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div className="flex min-w-0 items-start gap-3">
+          <span
+            className={`mt-2 h-2.5 w-2.5 shrink-0 rounded-full ${getCategoryDot(
+              event.category
+            )}`}
+          />
+
+          <div className="min-w-0">
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
+              {getCategoryLabel(event.category)}
+            </p>
+
+            <h3 className="mt-1 truncate text-lg font-semibold text-white transition group-hover:text-cyan-100">
+              {event.title}
+            </h3>
+          </div>
+        </div>
 
         <span
-          className={`rounded-full border px-3 py-1 text-xs font-medium ${getSeverityStyles(
+          className={`shrink-0 rounded-full border px-3 py-1 text-xs font-semibold ${getSeverityStyles(
             event.severity
           )}`}
         >
@@ -64,39 +91,30 @@ export default function EventCard({ event }: EventCardProps) {
         </span>
       </div>
 
-      <h3 className="mb-2 text-lg font-semibold text-white transition group-hover:text-cyan-100">
-        {event.title}
-      </h3>
+      <p className="line-clamp-2 text-sm leading-6 text-slate-300">
+        {event.message}
+      </p>
 
-      <p className="mb-5 text-sm leading-6 text-slate-300">{event.message}</p>
-
-      <div className="grid gap-3 text-sm text-slate-400 sm:grid-cols-2">
-        <div>
+      <div className="mt-5 grid gap-3 text-sm sm:grid-cols-3">
+        <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-3">
           <p className="text-xs uppercase tracking-wide text-slate-500">
             Location
           </p>
-          <p className="mt-1 text-slate-200">{event.location_name}</p>
+          <p className="mt-1 truncate text-slate-200">{event.location_name}</p>
         </div>
 
-        <div>
+        <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-3">
           <p className="text-xs uppercase tracking-wide text-slate-500">
             Source
           </p>
-          <p className="mt-1 text-slate-200">{event.source}</p>
+          <p className="mt-1 truncate text-slate-200">{event.source}</p>
         </div>
 
-        <div>
+        <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-3">
           <p className="text-xs uppercase tracking-wide text-slate-500">
             Status
           </p>
-          <p className="mt-1 text-slate-200">{event.status}</p>
-        </div>
-
-        <div>
-          <p className="text-xs uppercase tracking-wide text-slate-500">
-            Timestamp
-          </p>
-          <p className="mt-1 text-slate-200">{event.timestamp}</p>
+          <p className="mt-1 truncate text-slate-200">{event.status}</p>
         </div>
       </div>
     </article>

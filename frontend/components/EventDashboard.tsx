@@ -65,6 +65,41 @@ export default function EventDashboard({
 
   return (
     <div className="space-y-10">
+        <section className="grid gap-4 lg:grid-cols-3">
+            <div className="rounded-3xl border border-cyan-400/20 bg-cyan-500/10 p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
+                Step 01
+                </p>
+                <h3 className="mt-3 text-xl font-bold text-white">Collect Signals</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-400">
+                Weather alerts, reports, outages, and transportation updates enter the
+                system as raw signals.
+                </p>
+            </div>
+
+            <div className="rounded-3xl border border-purple-400/20 bg-purple-500/10 p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-purple-300">
+                Step 02
+                </p>
+                <h3 className="mt-3 text-xl font-bold text-white">Group Incidents</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-400">
+                Related signals are grouped into higher-level incidents with severity and
+                evidence links.
+                </p>
+            </div>
+
+            <div className="rounded-3xl border border-green-400/20 bg-green-500/10 p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-green-300">
+                Step 03
+                </p>
+                <h3 className="mt-3 text-xl font-bold text-white">Recommend Action</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-400">
+                The dashboard highlights what happened, what supports it, and what to do
+                next.
+                </p>
+            </div>
+            </section>
+
       <section id="reports">
         <UserReportForm
           onReportCreated={(newEvent) => {

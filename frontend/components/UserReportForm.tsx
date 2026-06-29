@@ -93,13 +93,19 @@ export default function UserReportForm({
       onSubmit={handleSubmit}
       className="mb-8 rounded-2xl border border-white/10 bg-white/5 p-6"
     >
-      <div className="mb-5">
-        <h2 className="text-2xl font-bold">Submit a User Report</h2>
-        <p className="mt-1 text-sm text-slate-400">
-          Add a new raw signal to the system. Later, AI will classify and group
-          reports like this into larger incidents.
+      <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+        <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
+            Add Signal
+            </p>
+
+            <h2 className="text-2xl font-bold text-white">Submit a User Report</h2>
+        </div>
+
+        <p className="max-w-md text-sm leading-6 text-slate-400">
+            Create a new signal and watch the incident layer update.
         </p>
-      </div>
+        </div>
 
       <div className="grid gap-4">
         <div>
