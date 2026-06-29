@@ -20,9 +20,9 @@ export default function DashboardMetricCard({
 }: DashboardMetricCardProps) {
   return (
     <div
-      className={`relative overflow-hidden rounded-3xl border bg-gradient-to-br p-5 shadow-lg shadow-black/20 ${toneStyles[tone]}`}
+        className={`group relative overflow-hidden rounded-3xl border bg-gradient-to-br p-5 shadow-lg shadow-black/20 transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/30 ${toneStyles[tone]}`}
     >
-      <div className="absolute right-4 top-4 h-16 w-16 rounded-full bg-white/10 blur-2xl" />
+      <div className="absolute right-4 top-4 h-16 w-16 rounded-full bg-white/10 blur-2xl transition group-hover:scale-125" />
 
       <p className="text-sm text-slate-400">{label}</p>
 

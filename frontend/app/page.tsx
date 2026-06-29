@@ -68,10 +68,20 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-slate-950 text-white">
-      <div className="pointer-events-none fixed inset-0">
-        <div className="absolute left-1/4 top-0 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="absolute right-0 top-1/3 h-96 w-96 rounded-full bg-purple-500/10 blur-3xl" />
-        <div className="absolute bottom-0 left-1/2 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="tech-grid absolute inset-0 opacity-30" />
+
+        <div className="glow-breathe absolute left-[18%] top-[-10%] h-[28rem] w-[28rem] rounded-full bg-cyan-500/10 blur-3xl" />
+        <div className="glow-breathe absolute right-[-8%] top-[22%] h-[30rem] w-[30rem] rounded-full bg-purple-500/10 blur-3xl [animation-delay:1200ms]" />
+        <div className="glow-breathe absolute bottom-[-12%] left-[45%] h-[26rem] w-[26rem] rounded-full bg-blue-500/10 blur-3xl [animation-delay:2200ms]" />
+
+        <div className="drift-diagonal absolute left-[-10%] top-[15%] h-40 w-[55rem] rotate-12 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent blur-2xl" />
+        <div className="drift-diagonal absolute right-[-18%] top-[58%] h-40 w-[55rem] -rotate-12 bg-gradient-to-r from-transparent via-purple-400/10 to-transparent blur-2xl [animation-delay:1800ms]" />
+
+        <div className="data-rain absolute left-[14%] top-0 h-28 w-px bg-cyan-300/30" />
+        <div className="data-rain absolute left-[37%] top-0 h-20 w-px bg-purple-300/30 [animation-delay:1400ms]" />
+        <div className="data-rain absolute left-[68%] top-0 h-24 w-px bg-cyan-300/30 [animation-delay:2600ms]" />
+        <div className="data-rain absolute left-[86%] top-0 h-16 w-px bg-green-300/25 [animation-delay:3600ms]" />
       </div>
 
       <div className="relative flex">
@@ -126,13 +136,7 @@ export default async function Home() {
                 </div>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                <DashboardMetricCard
-                  label="Backend Status"
-                  value={isConnected ? "Online" : "Offline"}
-                  helperText="FastAPI service health check."
-                  tone={isConnected ? "green" : "amber"}
-                />
+              <div className="grid gap-4 md:grid-cols-3">
 
                 <DashboardMetricCard
                   label="Raw Events"

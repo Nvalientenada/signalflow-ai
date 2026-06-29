@@ -97,3 +97,59 @@ body {
 .orbit-dot {
   animation: orbit 5s linear infinite;
 }
+
+@keyframes drift-diagonal {
+  0% {
+    transform: translate3d(-10%, 0, 0) rotate(0deg);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translate3d(8%, -8%, 0) rotate(8deg);
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate3d(-10%, 0, 0) rotate(0deg);
+    opacity: 0.25;
+  }
+}
+
+@keyframes glow-breathe {
+  0% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+}
+
+@keyframes data-rain {
+  0% {
+    transform: translateY(-20%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(120%);
+    opacity: 0;
+  }
+}
+
+.drift-diagonal {
+  animation: drift-diagonal 12s ease-in-out infinite;
+}
+
+.glow-breathe {
+  animation: glow-breathe 6s ease-in-out infinite;
+}
+
+.data-rain {
+  animation: data-rain 7s linear infinite;
+}
