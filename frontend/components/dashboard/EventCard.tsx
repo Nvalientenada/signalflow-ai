@@ -60,16 +60,34 @@ function getCategoryDot(category: RawEvent["category"]) {
   return styles[category];
 }
 
+function getCategoryIcon(category: RawEvent["category"]) {
+  const icons = {
+    weather: "☔",
+    transportation: "↗",
+    building: "⌂",
+    power: "⚡",
+    network: "◌",
+    user_report: "!",
+  };
+
+  return icons[category];
+}
+
 export default function EventCard({ event }: EventCardProps) {
   return (
     <article className="group rounded-3xl border border-white/10 bg-white/[0.04] p-5 shadow-lg shadow-black/20 transition hover:-translate-y-1 hover:border-cyan-400/30 hover:bg-white/[0.07]">
       <div className="mb-4 flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-start gap-3">
-          <span
-            className={`mt-2 h-2.5 w-2.5 shrink-0 rounded-full ${getCategoryDot(
-              event.category
-            )}`}
-          />
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-slate-950/70 text-sm shadow-lg shadow-black/20">
+            <span
+                className={`absolute h-2.5 w-2.5 rounded-full blur-sm ${getCategoryDot(
+                event.category
+                )}`}
+            />
+            <span className="relative text-slate-100">
+                {getCategoryIcon(event.category)}
+            </span>
+            </span>
 
           <div className="min-w-0">
             <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
