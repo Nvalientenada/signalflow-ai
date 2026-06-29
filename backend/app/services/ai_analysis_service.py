@@ -1,5 +1,6 @@
 from app.models import Incident, IncidentAnalysis, RawEvent
-
+from app.settings import USE_LLM_ANALYSIS
+from app.services.llm_analysis_service import analyze_incident_with_llm
 
 def get_evidence_events_for_incident(
     incident: Incident,
@@ -137,6 +138,15 @@ def analyze_incident(
     incident: Incident,
     evidence_events: list[RawEvent],
 ) -> IncidentAnalysis:
+    if USE_LLM_ANALYSIS:
+        try:
+            return analyze_incident_with_llm(
+                incident=incident,
+                evidence_events=evidence_events,
+            )
+        except Exception:
+            pass
+
     generated_summary = build_summary_sentence(
         incident=incident,
         evidence_events=evidence_events,
