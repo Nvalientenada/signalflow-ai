@@ -5,19 +5,27 @@ from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import create_database_tables
-from app.models import Incident, RawEvent, UserReportCreate, IncidentAnalysis, AIStatus
-
+from app.models import (
+    Incident, 
+    RawEvent, 
+    UserReportCreate, 
+    IncidentAnalysis, 
+    AIStatus,
+    DemoResetResponse
+)
 from app.settings import OPENAI_MODEL, USE_LLM_ANALYSIS
 
 from app.repositories.event_repositories import (
     get_all_events,
     get_next_event_id,
     save_event,
+    delete_all_events,
 )
 
 from app.repositories.analysis_repository import (
     get_cached_analysis,
     save_cached_analysis,
+    delete_all_cached_analyses,
 )
 
 from app.seed import seed_initial_events_if_needed
@@ -161,4 +169,18 @@ def get_ai_status():
         use_llm_analysis=USE_LLM_ANALYSIS,
         mode=mode,
         model=OPENAI_MODEL,
+    )
+
+@app.post("/demo/reset", response_model=DemoResetResponse)
+def reset_demo_data():
+    delete_all_cached_analyses() #caches AI analysis
+    delete_all_events() # clears events
+    seed_initial_events_if_needed() # pur original starter events back
+
+    events = get_all_events() # get new clean events list
+
+    return DemoResetResponse(
+        message="Demo data reset successfully.",
+        events_count=len(events),
+        cached_analyses_cleared=True,
     )

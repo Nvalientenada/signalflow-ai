@@ -67,3 +67,12 @@ def save_event(event: RawEvent) -> RawEvent:
 def get_event_count() -> int:
     with SessionLocal() as session:
         return session.query(EventRecord).count()
+    
+def delete_all_events() -> None : 
+    db = SessionLocal()
+
+    try :
+        db.query(EventRecord).delete()
+        db.commit()
+    finally:
+        db.close()

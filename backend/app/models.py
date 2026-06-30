@@ -69,3 +69,8 @@ class AIStatus(BaseModel):
     use_llm_analysis: bool
     mode: str
     model: str
+
+class DemoResetResponse(BaseModel):
+    message:str 
+    events_count: int 
+    cached_analyses_cleared: bool

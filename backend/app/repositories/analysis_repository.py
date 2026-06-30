@@ -52,3 +52,12 @@ def save_cached_analysis(
         return analysis
     finally:
         db.close()
+
+def delete_all_cached_analyses() -> None :
+    db = SessionLocal()
+
+    try:
+        db.query(CachedIncidentAnalysisModel).delete()
+        db.commit()
+    finally:
+        db.close()
