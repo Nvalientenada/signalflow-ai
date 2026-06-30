@@ -4,25 +4,78 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import GlobeVisual from "./GlobeVisual";
 
+type MonitoringScope = {
+  id: "building" | "campus" | "city";
+  label: string;
+  radius: string;
+  description: string;
+};
+
+const monitoringScopes: MonitoringScope[] = [
+  {
+    id: "building",
+    label: "Building area",
+    radius: "1 km",
+    description: "Best for one building, entrance, lab, dorm, or facility.",
+  },
+  {
+    id: "campus",
+    label: "Campus area",
+    radius: "3 km",
+    description: "Best for a college campus, business park, or small district.",
+  },
+  {
+    id: "city",
+    label: "City area",
+    radius: "10 km",
+    description: "Best for broader city weather and transportation disruptions.",
+  },
+];
+
 const suggestedLocations = [
-  "Schenectady, NY",
-  "New York, NY",
-  "Boston, MA",
-  "Casablanca, Morocco",
+  {
+    name: "Wold, Union College",
+    type: "Building",
+  },
+  {
+    name: "Union College, Schenectady",
+    type: "Campus",
+  },
+  {
+    name: "Schenectady, NY",
+    type: "City",
+  },
+  {
+    name: "Casablanca, Morocco",
+    type: "City",
+  },
 ];
 
 export default function LocationSelector() {
   const router = useRouter();
-  const [locationName, setLocationName] = useState("Schenectady, NY"); // stores selected location
+
+  const [locationName, setLocationName] = useState(
+    "Wold, Union College"
+  );
+
+  const [selectedScope, setSelectedScope] =
+    useState<MonitoringScope["id"]>("campus");
+
+  const activeScope = monitoringScopes.find(
+    (scope) => scope.id === selectedScope
+  );
 
   function handleStartMonitoring() {
-    const encodedLocation = encodeURIComponent(locationName.trim());
+    const cleanedLocation = locationName.trim();
 
-    if (!encodedLocation) {
+    if (!cleanedLocation) {
       return;
     }
 
-    router.push(`/?location=${encodedLocation}`);
+    const encodedLocation = encodeURIComponent(cleanedLocation);
+    const encodedScope = encodeURIComponent(selectedScope);
+
+    router.push(`/?location=${encodedLocation}&scope=${encodedScope}`);
   }
 
   return (
@@ -39,8 +92,8 @@ export default function LocationSelector() {
             </h1>
 
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
-              Choose the location SignalFlow should watch for weather,
-              transportation, infrastructure, and user-reported disruptions.
+              Choose a city, campus, building, or address for SignalFlow to
+              monitor for live operational disruptions.
             </p>
           </div>
 
@@ -63,9 +116,9 @@ export default function LocationSelector() {
             </h2>
 
             <p className="mt-3 text-sm leading-6 text-slate-400">
-              For now, this selection prepares the dashboard route. In the next
-              milestones, this location will be sent to real geocoding and
-              weather services to import live signals.
+              Search for a city, campus, building, landmark, or exact address.
+              The selected scope controls how wide the monitoring area should
+              be.
             </p>
 
             <div className="mt-8">
@@ -73,7 +126,7 @@ export default function LocationSelector() {
                 htmlFor="location"
                 className="mb-3 block text-sm font-semibold text-slate-200"
               >
-                Search location
+                Search city, campus, building, or address
               </label>
 
               <div className="flex flex-col gap-3 sm:flex-row">
@@ -81,7 +134,7 @@ export default function LocationSelector() {
                   id="location"
                   value={locationName}
                   onChange={(event) => setLocationName(event.target.value)}
-                  placeholder="Example: Schenectady, NY"
+                  placeholder="Example: Wold Center, Union College"
                   className="min-h-14 flex-1 rounded-2xl border border-white/10 bg-slate-950/70 px-5 text-base text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400/50 focus:ring-4 focus:ring-cyan-400/10"
                 />
 
@@ -95,50 +148,97 @@ export default function LocationSelector() {
             </div>
 
             <div className="mt-8">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-slate-300">
+                  Monitoring scope
+                </p>
+
+                <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-200">
+                  Radius: {activeScope?.radius}
+                </span>
+              </div>
+
+              <div className="grid gap-3 md:grid-cols-3">
+                {monitoringScopes.map((scope) => {
+                  const isActive = selectedScope === scope.id;
+
+                  return (
+                    <button
+                      key={scope.id}
+                      onClick={() => setSelectedScope(scope.id)}
+                      className={
+                        isActive
+                          ? "rounded-2xl border border-cyan-300/50 bg-cyan-500/15 p-4 text-left shadow-lg shadow-cyan-500/10 transition"
+                          : "rounded-2xl border border-white/10 bg-slate-950/50 p-4 text-left transition hover:border-cyan-400/30 hover:bg-cyan-500/10"
+                      }
+                    >
+                      <div className="mb-3 flex items-center justify-between gap-3">
+                        <p className="text-sm font-bold text-white">
+                          {scope.label}
+                        </p>
+
+                        <span
+                          className={
+                            isActive
+                              ? "h-3 w-3 rounded-full bg-cyan-300 shadow-lg shadow-cyan-300/60"
+                              : "h-3 w-3 rounded-full border border-white/20"
+                          }
+                        />
+                      </div>
+
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                        {scope.radius}
+                      </p>
+
+                      <p className="mt-2 text-xs leading-5 text-slate-400">
+                        {scope.description}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="mt-8">
               <p className="mb-3 text-sm font-semibold text-slate-300">
                 Suggested areas
               </p>
 
-              <div className="flex flex-wrap gap-3">
+              <div className="grid gap-3 sm:grid-cols-2">
                 {suggestedLocations.map((location) => (
                   <button
-                    key={location}
-                    onClick={() => setLocationName(location)}
-                    className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300 transition hover:border-cyan-400/40 hover:bg-cyan-500/10 hover:text-cyan-100"
+                    key={location.name}
+                    onClick={() => setLocationName(location.name)}
+                    className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left transition hover:border-cyan-400/40 hover:bg-cyan-500/10"
                   >
-                    {location}
+                    <span>
+                      <span className="block text-sm font-semibold text-slate-200">
+                        {location.name}
+                      </span>
+
+                      <span className="mt-1 block text-xs text-slate-500">
+                        {location.type}
+                      </span>
+                    </span>
+
+                    <span className="text-cyan-300">→</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
-                  Step 1
-                </p>
-                <p className="mt-2 text-sm font-semibold text-slate-100">
-                  Select area
-                </p>
-              </div>
+            <div className="mt-8 rounded-2xl border border-purple-400/20 bg-purple-500/10 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-purple-200">
+                Selected Monitor
+              </p>
 
-              <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
-                  Step 2
-                </p>
-                <p className="mt-2 text-sm font-semibold text-slate-100">
-                  Fetch signals
-                </p>
-              </div>
+              <p className="mt-2 text-lg font-bold text-white">
+                {locationName || "No location selected"}
+              </p>
 
-              <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
-                  Step 3
-                </p>
-                <p className="mt-2 text-sm font-semibold text-slate-100">
-                  Generate incidents
-                </p>
-              </div>
+              <p className="mt-1 text-sm text-slate-400">
+                Scope: {activeScope?.label} · {activeScope?.radius} radius
+              </p>
             </div>
           </section>
 
