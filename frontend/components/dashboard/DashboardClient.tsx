@@ -10,6 +10,8 @@ import { RawEvent } from "./EventCard";
 
 import type { AIStatus } from "@/app/page";
 
+import Link from "next/link";
+
 type BackendHealth = {
   status: string;
   service: string;
@@ -50,6 +52,13 @@ export default function DashboardClient({
             <p className="mb-4 w-fit rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-200">
               AI Incident Intelligence Platform
             </p>
+            <Link
+                href="/location"
+                className="mb-5 inline-flex items-center gap-2 rounded-full border border-purple-400/30 bg-purple-500/10 px-4 py-2 text-sm font-semibold text-purple-100 transition hover:border-purple-300/50 hover:bg-purple-500/20"
+            >
+                Choose monitoring location
+                <span>→</span>
+            </Link>
 
             <h1 className="max-w-4xl text-6xl font-black tracking-tight text-white sm:text-7xl xl:text-8xl">
               SignalFlow AI

@@ -153,3 +153,21 @@ body {
 .data-rain {
   animation: data-rain 7s linear infinite;
 }
+
+@keyframes globe-rotate {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: rotate(180deg) scale(1.03);
+  }
+
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+.globe-rotate {
+  animation: globe-rotate 18s linear infinite;
+}
