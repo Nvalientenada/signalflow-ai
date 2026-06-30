@@ -170,4 +170,5 @@ def analyze_incident(
         recommended_action=recommended_action,
         confidence_score=confidence_score,
         reasoning_notes=reasoning_notes,
+        analysis_source = "local_fallback",
     )

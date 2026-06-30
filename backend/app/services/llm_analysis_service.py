@@ -97,4 +97,5 @@ def analyze_incident_with_llm(
         recommended_action=parsed_response["recommended_action"],
         confidence_score=float(parsed_response["confidence_score"]),
         reasoning_notes=parsed_response["reasoning_notes"],
+        analysis_source="llm",
     )
