@@ -1,6 +1,8 @@
 from app.models import Incident, IncidentAnalysis, RawEvent
 from app.settings import USE_LLM_ANALYSIS
 from app.services.llm_analysis_service import analyze_incident_with_llm
+import hashlib
+import json 
 
 def get_evidence_events_for_incident(
     incident: Incident,
@@ -133,6 +135,37 @@ def build_reasoning_notes(
 
     return notes
 
+def build_analysis_fingerprint(
+    incident: Incident,
+    evidence_events: list[RawEvent],
+) -> str:
+    evidence_payload = [
+        {
+            "id": event.id,
+            "title": event.title,
+            "category": event.category,
+            "severity": event.severity,
+            "location_name": event.location_name,
+            "message": event.message,
+            "source": event.source,
+        }
+        for event in evidence_events
+    ]
+
+    payload = {
+        "incident_title": incident.title,
+        "incident_severity": incident.severity,
+        "incident_status": incident.status,
+        "affected_area": incident.affected_area,
+        "evidence_events": sorted(
+            evidence_payload,
+            key=lambda event: event["id"],
+        ),
+    }
+
+    payload_as_text = json.dumps(payload, sort_keys=True)
+
+    return hashlib.sha256(payload_as_text.encode("utf-8")).hexdigest()
 
 def analyze_incident(
     incident: Incident,

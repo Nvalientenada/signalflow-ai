@@ -14,6 +14,12 @@ from app.repositories.event_repositories import (
     get_next_event_id,
     save_event,
 )
+
+from app.repositories.analysis_repository import (
+    get_cached_analysis,
+    save_cached_analysis,
+)
+
 from app.seed import seed_initial_events_if_needed
 from app.services.incident_service import generate_incidents
 from app.services.report_classifier import (
@@ -24,6 +30,7 @@ from app.services.report_classifier import (
 from app.services.ai_analysis_service import (
     analyze_incident,
     get_evidence_events_for_incident,
+    build_analysis_fingerprint,
 )
 
 
@@ -119,10 +126,29 @@ def get_incident_analyses():
             events=events,
         )
 
+        # build the fingerprint
+        fingerprint = build_analysis_fingerprint(
+            incident=incident,
+            evidence_events=evidence_events,
+        )
+
+        # check cache 
+        cached_analysis = get_cached_analysis(fingerprint)
+
+        if cached_analysis is not None : # if cache exists use it
+            analyses.append(cached_analysis)
+            continue 
+
         analysis = analyze_incident(
             incident=incident,
             evidence_events=evidence_events,
         )
+
+        save_cached_analysis(
+            fingerprint=fingerprint,
+            analysis=analysis,
+        )
+
         analyses.append(analysis)
 
     return analyses
