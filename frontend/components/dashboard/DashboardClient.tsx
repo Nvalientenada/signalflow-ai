@@ -24,7 +24,41 @@ type DashboardClientProps = {
   initialAnalyses: IncidentAnalysis[];
   backendHealth: BackendHealth;
   aiStatus: AIStatus;
+  selectedLocation: string;
+  selectedScope: string;
 };
+
+function formatMonitoringScope(scope: string) {
+  if (scope === "building") {
+    return "Building area";
+  }
+
+  if (scope === "campus") {
+    return "Campus area";
+  }
+
+  if (scope === "city") {
+    return "City area";
+  }
+
+  return "Custom area";
+}
+
+function getMonitoringRadius(scope: string) {
+  if (scope === "building") {
+    return "1 km";
+  }
+
+  if (scope === "campus") {
+    return "3 km";
+  }
+
+  if (scope === "city") {
+    return "10 km";
+  }
+
+  return "custom";
+}
 
 export default function DashboardClient({
   initialEvents,
@@ -32,6 +66,8 @@ export default function DashboardClient({
   initialAnalyses,
   backendHealth,
   aiStatus,
+  selectedLocation,
+  selectedScope,
 }: DashboardClientProps) {
   const [dashboardEvents, setDashboardEvents] =
     useState<RawEvent[]>(initialEvents);
@@ -56,7 +92,7 @@ export default function DashboardClient({
                 href="/location"
                 className="mb-5 inline-flex items-center gap-2 rounded-full border border-purple-400/30 bg-purple-500/10 px-4 py-2 text-sm font-semibold text-purple-100 transition hover:border-purple-300/50 hover:bg-purple-500/20"
             >
-                Choose monitoring location
+                Change monitoring location
                 <span>→</span>
             </Link>
 
@@ -68,6 +104,31 @@ export default function DashboardClient({
               Transform raw alerts, reports, and disruptions into live
               incidents, evidence, and action-ready intelligence.
             </p>
+            <div className="mt-6 grid max-w-3xl gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
+                    Monitoring Area
+                    </p>
+
+                    <p className="mt-2 truncate text-lg font-bold text-white">
+                    {selectedLocation}
+                    </p>
+                </div>
+
+                <div className="rounded-2xl border border-purple-400/20 bg-purple-500/10 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-purple-300">
+                    Scope
+                    </p>
+
+                    <p className="mt-2 text-lg font-bold text-white">
+                    {formatMonitoringScope(selectedScope)}
+                    </p>
+
+                    <p className="mt-1 text-sm text-slate-400">
+                    {getMonitoringRadius(selectedScope)} radius
+                    </p>
+                </div>
+                </div>
           </div>
 
           <div className="hidden lg:flex lg:justify-end">

@@ -10,6 +10,13 @@ export type AIStatus = {
   model: string;
 };
 
+type HomePageProps = {
+  searchParams?: Promise<{
+    location?: string;
+    scope?: string;
+  }>;
+};
+
 async function getBackendHealth() {
   try {
     const response = await fetch("http://127.0.0.1:8000/health", {
@@ -33,7 +40,6 @@ async function getBackendHealth() {
     };
   }
 }
-
 
 async function getEvents(): Promise<RawEvent[]> {
   try {
@@ -107,7 +113,15 @@ async function getAIStatus(): Promise<AIStatus> {
   }
 }
 
-export default async function Home() {
+export default async function Home({ searchParams }: HomePageProps) {
+  const resolvedSearchParams = await searchParams;
+
+  const selectedLocation =
+    resolvedSearchParams?.location ?? "Schenectady, NY";
+
+  const selectedScope =
+    resolvedSearchParams?.scope ?? "city";
+
   const backendHealth = await getBackendHealth();
   const events = await getEvents();
   const incidents = await getIncidents();
@@ -140,9 +154,11 @@ export default async function Home() {
             <DashboardClient
               initialEvents={events}
               initialIncidents={incidents}
-              initialAnalyses = {analyses}
+              initialAnalyses={analyses}
               backendHealth={backendHealth}
               aiStatus={aiStatus}
+              selectedLocation={selectedLocation}
+              selectedScope={selectedScope}
             />
           </div>
         </section>
