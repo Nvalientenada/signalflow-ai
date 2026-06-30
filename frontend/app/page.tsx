@@ -4,6 +4,12 @@ import { Incident } from "@/components/dashboard/IncidentCard";
 import { RawEvent } from "@/components/dashboard/EventCard";
 import { IncidentAnalysis } from "@/components/dashboard/AIAnalysisPanel";
 
+export type AIStatus = {
+  use_llm_analysis: boolean;
+  mode: string;
+  model: string;
+};
+
 async function getBackendHealth() {
   try {
     const response = await fetch("http://127.0.0.1:8000/health", {
@@ -27,6 +33,7 @@ async function getBackendHealth() {
     };
   }
 }
+
 
 async function getEvents(): Promise<RawEvent[]> {
   try {
@@ -76,11 +83,36 @@ async function getIncidentAnalyses(): Promise<IncidentAnalysis[]> {
   }
 }
 
+async function getAIStatus(): Promise<AIStatus> {
+  try {
+    const response = await fetch("http://127.0.0.1:8000/ai/status", {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return {
+        use_llm_analysis: false,
+        mode: "unknown",
+        model: "unknown",
+      };
+    }
+
+    return response.json();
+  } catch {
+    return {
+      use_llm_analysis: false,
+      mode: "unknown",
+      model: "unknown",
+    };
+  }
+}
+
 export default async function Home() {
   const backendHealth = await getBackendHealth();
   const events = await getEvents();
   const incidents = await getIncidents();
   const analyses = await getIncidentAnalyses();
+  const aiStatus = await getAIStatus();
 
   return (
     <main className="min-h-screen overflow-hidden bg-slate-950 text-white">
@@ -110,6 +142,7 @@ export default async function Home() {
               initialIncidents={incidents}
               initialAnalyses = {analyses}
               backendHealth={backendHealth}
+              aiStatus={aiStatus}
             />
           </div>
         </section>

@@ -5,7 +5,10 @@ from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import create_database_tables
-from app.models import Incident, RawEvent, UserReportCreate, IncidentAnalysis
+from app.models import Incident, RawEvent, UserReportCreate, IncidentAnalysis, AIStatus
+
+from app.settings import OPENAI_MODEL, USE_LLM_ANALYSIS
+
 from app.repositories.event_repositories import (
     get_all_events,
     get_next_event_id,
@@ -121,5 +124,15 @@ def get_incident_analyses():
             evidence_events=evidence_events,
         )
         analyses.append(analysis)
-        
+
     return analyses
+
+@app.get("/ai/status", response_model=AIStatus)
+def get_ai_status():
+    mode = "llm_enabled" if USE_LLM_ANALYSIS else "local_fallback"
+
+    return AIStatus(
+        use_llm_analysis=USE_LLM_ANALYSIS,
+        mode=mode,
+        model=OPENAI_MODEL,
+    )

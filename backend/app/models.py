@@ -63,3 +63,8 @@ class IncidentAnalysis(BaseModel):
     recommended_action: str
     confidence_score: float
     reasoning_notes: list[str]
+
+class AIStatus(BaseModel):
+    use_llm_analysis: bool
+    mode: str
+    model: str

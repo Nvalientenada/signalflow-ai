@@ -5,8 +5,10 @@ import { useState } from "react";
 import DashboardMetricCard from "./DashboardMetricCard";
 import SignalOrb from "./SignalOrb";
 import EventDashboard from "../EventDashboard";
-import { Incident } from "./IncidentCard";
+import type { Incident } from "./IncidentCard";
 import { RawEvent } from "./EventCard";
+
+import type { AIStatus } from "@/app/page";
 
 type BackendHealth = {
   status: string;
@@ -19,6 +21,7 @@ type DashboardClientProps = {
   initialIncidents: Incident[];
   initialAnalyses: IncidentAnalysis[];
   backendHealth: BackendHealth;
+  aiStatus: AIStatus;
 };
 
 export default function DashboardClient({
@@ -26,6 +29,7 @@ export default function DashboardClient({
   initialIncidents,
   initialAnalyses,
   backendHealth,
+  aiStatus,
 }: DashboardClientProps) {
   const [dashboardEvents, setDashboardEvents] =
     useState<RawEvent[]>(initialEvents);
@@ -64,23 +68,45 @@ export default function DashboardClient({
               <div className="relative flex flex-col items-center gap-4">
                 <SignalOrb label="AI" />
 
-                <div className="w-full rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
-                    Live System
-                  </p>
+                <div className="w-full space-y-3 rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-4">
+                    <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
+                        Live System
+                        </p>
 
-                  <p className="mt-2 text-sm text-slate-300">
-                    Backend:{" "}
-                    <span
-                      className={
-                        isConnected
-                          ? "font-semibold text-green-300"
-                          : "font-semibold text-red-300"
-                      }
-                    >
-                      {isConnected ? "Connected" : "Offline"}
-                    </span>
-                  </p>
+                        <p className="mt-2 text-sm text-slate-300">
+                        Backend:{" "}
+                        <span
+                            className={
+                            isConnected
+                                ? "font-semibold text-green-300"
+                                : "font-semibold text-red-300"
+                            }
+                        >
+                            {isConnected ? "Connected" : "Offline"}
+                        </span>
+                        </p>
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-between gap-3 rounded-full border border-white/10 bg-slate-950/50 px-3 py-2">
+                        <div className="flex items-center gap-2">
+                            <span
+                            className={
+                                aiStatus.use_llm_analysis
+                                ? "signal-pulse h-2.5 w-2.5 rounded-full bg-green-300"
+                                : "signal-pulse h-2.5 w-2.5 rounded-full bg-cyan-300"
+                            }
+                            />
+
+                            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                            AI Mode
+                            </span>
+                        </div>
+
+                        <span className="text-xs font-semibold text-cyan-100">
+                            {aiStatus.mode === "llm_enabled" ? "LLM" : "Local"}
+                        </span>
+                        </div>
                 </div>
               </div>
             </div>
@@ -114,10 +140,10 @@ export default function DashboardClient({
       <EventDashboard
         dashboardEvents={dashboardEvents}
         dashboardIncidents={dashboardIncidents}
-        dashboardAnalyses = {dashboardAnalyses}
+        dashboardAnalyses={dashboardAnalyses}
         setDashboardEvents={setDashboardEvents}
         setDashboardIncidents={setDashboardIncidents}
-        setDashboardAnalyses = {setDashboardAnalyses}
+        setDashboardAnalyses={setDashboardAnalyses}
       />
     </>
   );
